@@ -22,14 +22,14 @@ $B_j\sim N(0,\sigma_B^2)$
 $G_i\sim N(0,\sigma_G^2)$  
 $\varepsilon_{ij}\sim N(0,\sigma_e^2)$  
 
-The aforementioned model was used to 1) estimate broad sense heritability and 2) compute the adjusted means of genotypes in a panel of tomato hybrids tested across different site-by-season combinations.
+The aforementioned model was used to 1) estimate broad sense heritability and 2) compute the adjusted means of genotypes in a panel of hybrids tested across different site-by-season combinations.
 ## Results
 
 
 ### Estimation of broad sense heritability 
 Variance components of **Model 1** fitted using lme4, sommer and augmentedRCBD R packages were used to estimate broad sense heritability **(Table 1)**.  
 
-**Table 1**: Estimation of broad sense heritability in tomato hybrids tested in 2026  
+**Table 1**: Estimation of broad sense heritability in hybrids tested in 2026  
 | Trait          | *H*<sup>2</sup> Augmented | *H*<sup>2</sup> Cullis | *H*<sup>2</sup> AugmentedRCBD | *H*<sup>2</sup> sommer |
 |----------------|-------------------------|----------------------|-----------------------------|----------------------|
 | TotCH          | 0.167  | 0.184     | NA               | 0.167     |
@@ -46,7 +46,7 @@ Variance components of **Model 1** fitted using lme4, sommer and augmentedRCBD R
 
 To double check the results reported in **Table 1**, *H*<sup>2</sup> was also computed using a specific R package (heritable), whch allows also the computation of different estimates of *H*<sup>2</sup> (**Table 2**)
 
-**Table 2**: Estimation of broad sense heritability in tomato hybrids tested in 2026 using heritable package.
+**Table 2**: Estimation of broad sense heritability in hybrids tested in 2026 using heritable package.
 |Trait         |*H*<sup>2</sup> Cullis| *H*<sup>2</sup> Oakey|*H*<sup>2</sup> Delta| *H*<sup>2</sup> Piepho|
 |--------------|------|-----|-----|------|
 |TotCH         |0.184 |0.184|0.184|0.139 |
