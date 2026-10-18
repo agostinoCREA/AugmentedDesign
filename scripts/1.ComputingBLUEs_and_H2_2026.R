@@ -9,6 +9,9 @@ library(sommer)
 library(heritable)
 ########################################### script arguments ########
 pheno_f<-here("data/pheno/data_final.csv") ## data 2026
+out_table1=here("Results/1.Tomato_AugmentedRCBD_BLUEs_no_volare.csv")
+out_table2=here("Results/1.Tomato_AugmentedRCBD_BLUEs_H2_heritable_no_volare.csv")
+REMOVE_VOLARE=FALSE
 
 ######################################## main script ################
 pheno_raw <- read.csv(pheno_f, stringsAsFactors = FALSE)
@@ -41,7 +44,10 @@ pheno_clean <- pheno_df %>%
     plant_weight_g = ifelse(plant_weight_g <= 0, NA, plant_weight_g),
     fruit_weight_g = ifelse(fruit_weight_g <= 0, NA, fruit_weight_g)
   )
-#pheno_clean[,7:12][pheno_clean$Genotype=="VOLARE",]<-NA
+if (isTRUE(REMOVE_VOLARE)){
+  pheno_clean[,7:12][pheno_clean$Genotype=="VOLARE",]<-NA
+}
+#
 # ==============================================================================
 # STAGE 2: EXTRACT BLOCK-ADJUSTED BLUEs & HERITABILITY (H2)
 # ==============================================================================
@@ -143,6 +149,6 @@ for (i in seq_along(traits)) {
 }
 
 
-write.csv(stage2_summary, "Results/1.Tomato_AugmentedRCBD_BLUEs_bis.csv", row.names = FALSE)
-write.csv(heri, "Results/1.Tomato_AugmentedRCBD_BLUEs_H2_heritable.csv", row.names = FALSE)
+write.csv(stage2_summary, out_table1, row.names = FALSE)
+write.csv(heri, out_table2, row.names = FALSE)
 
