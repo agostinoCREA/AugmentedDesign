@@ -9,8 +9,8 @@ library(sommer)
 library(heritable)
 ########################################### script arguments ########
 pheno_f<-here("data/pheno/data_final.csv") ## data 2026
-out_table1=here("Results/1.Tomato_AugmentedRCBD_BLUEs_no_volare.csv")
-out_table2=here("Results/1.Tomato_AugmentedRCBD_BLUEs_H2_heritable_no_volare.csv")
+out_table1=here("Results/1.AugmentedRCBD_BLUEs.csv")
+out_table2=here("Results/1.AugmentedRCBD_BLUEs_H2_heritable.csv")
 REMOVE_VOLARE=FALSE
 
 ######################################## main script ################
