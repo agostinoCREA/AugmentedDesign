@@ -44,7 +44,7 @@ Variance components of **Model 1** fitted using lme4, sommer and augmentedRCBD R
 *H*<sup>2</sup> AugmentedRCBD: broad sense heritability estimated from **Model 1** fitted with **AugmentedRCBD** package (see manual for more info regarding the formula used for computing this parameter).  
 *H*<sup>2</sup> sommer: broad sense heritability estimated from **Model 1** fitted with **sommer** package using standard formula.  
 
-To double check the results reported in **Table 1**, *H*<sup>2</sup> was also computed using a specific R package (heritable), whih allows alse the computation different estimates of *H*<sup>2</sup> (**Table 2**)
+To double check the results reported in **Table 1**, *H*<sup>2</sup> was also computed using a specific R package (heritable), whch allows also the computation of different estimates of *H*<sup>2</sup> (**Table 2**)
 
 **Table 2**: Estimation of broad sense heritability in tomato hybrids tested in 2026 using heritable package.
 |Trait         |*H*<sup>2</sup> Cullis| *H*<sup>2</sup> Oakey|*H*<sup>2</sup> Delta| *H*<sup>2</sup> Piepho|
