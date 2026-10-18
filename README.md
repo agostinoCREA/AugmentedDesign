@@ -36,8 +36,8 @@ Variance components of **Model 1** fitted using lme4, sommer and augmentedRCBD R
 | Fv_Fm          | 0.149  | 0.164     | 0.499            | 0.15      |
 | Sm             | 0.123  | 0.139     | 0.185            | 0.123     |
 | Pi_Abs         | 0.094  | 0.108     | 0.255            | 0.094     |
-| plant_weight_g | 178     | 0.237  | 0.253     | 0.243            | 0.237     |
-| fruit_weight_g | 177     | 0.244  | 0.258     | 0.391            | 0.244     |
+| plant_weight_g | 0.237    | 0.237  | 0.253     | 0.243            | 0.237     |
+| fruit_weight_g | 0.244   | 0.244  | 0.258     | 0.391            | 0.244     |
 
 *H*<sup>2</sup> Augmented : broad sense heritability estimated from **Model 1** fitted with **lme4** package using standard formula.  
 *H*<sup>2</sup> Cullis: broad sense heritability estimated from **Model 1** fitted with **lme4** package using Cullis' formula.  
