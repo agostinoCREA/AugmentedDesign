@@ -6,6 +6,7 @@ library(data.table)
 library(ggplot2)
 library(augmentedRCBD)
 library(sommer)
+library(heritable)
 ########################################### script arguments ########
 pheno_f<-here("data/pheno/data_final.csv") ## data 2026
 
@@ -40,7 +41,7 @@ pheno_clean <- pheno_df %>%
     plant_weight_g = ifelse(plant_weight_g <= 0, NA, plant_weight_g),
     fruit_weight_g = ifelse(fruit_weight_g <= 0, NA, fruit_weight_g)
   )
-
+#pheno_clean[,7:12][pheno_clean$Genotype=="VOLARE",]<-NA
 # ==============================================================================
 # STAGE 2: EXTRACT BLOCK-ADJUSTED BLUEs & HERITABILITY (H2)
 # ==============================================================================
@@ -59,6 +60,15 @@ stage2_summary <- data.frame(
   H2_AugmentedRCBD     = NA,
   H2_sommer =NA
 )
+heri<-data.frame(
+  Trait=traits,
+  Cullis=NA,
+  Oakey=NA,
+  Delta=NA,
+  Piepho=NA,
+  Standard=NA
+)
+
 
 for (i in seq_along(traits)) {
   t <- traits[i]
@@ -92,7 +102,7 @@ for (i in seq_along(traits)) {
   
   # Compute broad sense heritability computed using the package augmentedRCBD
   ### this loop removes the missing checks to avoid errors in augmentedRCBD
-  checks=c("DF0175","UG11227","H1301","H2206","H3402" ,"VOLARE","N6438")
+  checks=c("DF0175","UG11227","H1301","H2206","H3402" ,"N6438") #no volare
   for (check in checks){
     #print (check)
     if ( (length((sub_df$Block[sub_df$Check_ID==check])))< 11){
@@ -122,8 +132,17 @@ for (i in seq_along(traits)) {
   stage2_summary$H2_Cullis[i]   <- round(h2_cullis, 3)
   stage2_summary$H2_AugmentedRCBD[i]  <- round(gva.augmentedRCBD(out1)$hBS/100,3)
   stage2_summary$H2_sommer[i]  <- round(h2_sommer$Estimate,3)
+  print ("Computing heritability with heritable package")
+  #H2(fit_blup , target = "Genotype",method = c("Cullis", "Oakey", "Delta", "Piepho", "Standard"))
+  s=H2(fit_blup , target = "Genotype",method = c("Cullis", "Oakey", "Delta", "Piepho", "Standard"))
+  heri$Cullis[i]=round(s[1],3)
+  heri$Oakey[i]=round(s[2],3)
+  heri$Delta[i]=round(s[3],3)
+  heri$Piepho[i]=round(s[4],3)
+  heri$Standard[1]=round(s[5],3)
 }
 
 
-write.csv(BLUE_df, "Results/1.Tomato_AugmentedRCBD_BLUEs.csv", row.names = FALSE)
+write.csv(stage2_summary, "Results/1.Tomato_AugmentedRCBD_BLUEs_bis.csv", row.names = FALSE)
+write.csv(heri, "Results/1.Tomato_AugmentedRCBD_BLUEs_H2_heritable.csv", row.names = FALSE)
 
