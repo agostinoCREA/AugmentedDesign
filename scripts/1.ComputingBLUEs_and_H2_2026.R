@@ -9,8 +9,8 @@ library(sommer)
 library(heritable)
 ########################################### script arguments ########
 pheno_f<-here("data/pheno/data_final.csv") ## data 2026
-out_table1=here("Results/1.AugmentedRCBD_BLUEs.csv")
-out_table2=here("Results/1.AugmentedRCBD_BLUEs_H2_heritable.csv")
+out_table1=here("Results/1.AugmentedRCBD_BLUEs")
+out_table2=here("Results/1.AugmentedRCBD_BLUEs_H2_heritable")
 REMOVE_VOLARE=FALSE
 
 ######################################## main script ################
@@ -149,6 +149,6 @@ for (i in seq_along(traits)) {
 }
 
 
-write.csv(stage2_summary, out_table1, row.names = FALSE)
-write.csv(heri, out_table2, row.names = FALSE)
+write.csv(stage2_summary, paste0(out_table1,"VOLARE_",as.character(REMOVE_VOLARE),".csv"), row.names = FALSE)
+write.csv(heri, paste0(out_table2,"VOLARE_",as.character(REMOVE_VOLARE),".csv"), row.names = FALSE)
 

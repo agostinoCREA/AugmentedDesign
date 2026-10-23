@@ -15,7 +15,9 @@ library("sommer")
 file=here("data/2025/FieldMap.xlsx")  ## 20
 pheno=here("data/2025//PhD_GS_25_Dataset1_Final.xlsx")
 maps2025<-here("Results/2025/Field_map_2025.png")
-
+out_table1=here("Results/2025/1.AugmentedRCBD_BLUEs_H2")
+out_table2=here("Results/2025/1.AugmentedRCBD_BLUEs_H2_heritable")
+REMOVE_VOLARE=FALSE
 
 ################################## main script #######################
 df=read.xlsx(xlsxFile = file, sheet = "Sheet1")
@@ -44,6 +46,14 @@ df_all$Type<-NA
 df_all$Type[df_all$Genotype %in% c("VOLARE","H1301","N6438","H2206","DF0175","H3402","UG11227","UG11227","DF0175")]<-"Check"
 df_all$Type[is.na(df_all$Type)]<-"Variety"
 
+
+
+
+traits<-c("plant.wt_Kg","green.wt.Kg","red.wt.Kg","red.fruit.wt.g","pericarp.wt.g","water.wt.g","avg_firm",
+          "med_firm","Brix")
+colnames(df_all)[12:20]<-traits
+
+
 blues_list <- list()
 stage2_summary <- data.frame(
   Trait      = traits,
@@ -67,15 +77,13 @@ heri<-data.frame(
   Standard=NA
 )
 
-
-traits<-c("plant.wt_Kg","green.wt.Kg","red.wt.Kg","red.fruit.wt.g","pericarp.wt.g","water.wt.g","avg_firm",
-          "med_firm","Brix","Temp")
-colnames(df_all)[12:21]<-traits
-
 for (i in seq_along(traits)){
   t <- traits[i]
   print (paste0("Analyzing trait ",t," ......."))
   sub_df <- df_all %>% filter(!is.na(.data[[t]]))
+  if (isTRUE(REMOVE_VOLARE)){
+    sub_df$Genotype[sub_df$Genotype=="VOLARE"]<-NA
+  }
   form_blue <- as.formula(paste(t, "~ 1 + Genotype + (1|Block)"))
   fit_blue  <- lmer(formula = form_blue, data = sub_df,control = lmerControl(optimizer = "bobyqa", calc.derivs = FALSE))
   
@@ -137,46 +145,45 @@ for (i in seq_along(traits)){
   stage2_summary$H2_sommer[i]<-NA
   print ("Computing heritability with heritable package")
   #H2(fit_blup , target = "Genotype",method = c("Cullis", "Oakey", "Delta", "Piepho", "Standard"))
-  s=H2(fit_blup , target = "Genotype",method = c("Cullis", "Oakey", "Delta", "Piepho", "Standard"))
+  s=H2(fit_blup , target = "Genotype",method = c("Cullis", "Standard","Oakey","Delta")) #c("Cullis", "Oakey", "Delta", "Piepho", "Standard")
   heri$Cullis[i]=round(s[1],3)
   heri$Oakey[i]=round(s[2],3)
   heri$Delta[i]=round(s[3],3)
-  heri$Piepho[i]=round(s[4],3)
-  heri$Standard[1]=round(s[5],3)
+  #heri$Piepho[i]=round(s[4],3)
+  heri$Standard[i]=round(s[5],3)
 }
+write.csv(stage2_summary, paste0(out_table1,"_REMOVED_VOLARE_",as.character(REMOVE_VOLARE),".csv"), row.names = FALSE)
+write.csv(heri, paste0(out_table2,"_REMOVED_VOLARE_",as.character(REMOVE_VOLARE),".csv"), row.names = FALSE)
 
-model1 <- lmer(`plant.wt.(kg)` ~ (1|Block) + (1|Genotype), data = df_all, REML = F,control = lmerControl(optimizer = "bobyqa", calc.derivs = FALSE))
-model2 <- lmer(`plant.wt.(kg)` ~ (1|Block) + Genotype, data = df_all, REML = F,control = lmerControl(optimizer = "bobyqa", calc.derivs = FALSE))
 
-
-summary(model1)
-ranef(model1)    
-vc    <- as.data.frame(VarCorr(model1))
-var_g <- vc$vcov[vc$grp == "Genotype"]
-var_e <- vc$vcov[vc$grp == "Residual"]
-
-# Standard Augmented Broad-Sense Heritability
-h2_aug <- ifelse((var_g + var_e) > 0, var_g / (var_g + var_e), 0)
-
-h2_aug
-s=H2(model1, target = "Genotype",method = c("Cullis", "Oakey", "Delta", "Piepho", "Standard"))
-
-library(emmeans)
-geno <- emmeans(model2, ~CODE)
-geno=data.frame(geno)
-re=data.frame(ranef(model1)$CODE)
-re$CODE=rownames(re)
-geno=merge(re,geno,by="CODE")
-geno$adjmeans=geno$emmean+geno$X.Intercept.
-ch=c("VOLARE","H1301","N6438","H2206","DF0175","H3402","UG11227","UG11227","DF0175")
-#df_all$PlantWt[is.na(df_all$PlantWt)]<-mean(df_all$PlantWt,na.rm=T)
-#df_all=df_all[!is.na(df_all$`plant.wt.(kg)`),]
-
-model2=augmentedRCBD(block = as.factor(df_all$COL.x),treatment = as.factor(df_all$CODE),y = as.vector(df_all$`plant.wt.(kg)`),checks =ch )
-augmentedRCBD::gva.augmentedRCBD(model2)
-
-summary(model2)
-adj2=model2$Means ## here the adjusted means computed with the package augumenedRCBD
-write.table(x = model2$Means,file = "C:/Users/Agostino.Fricano/OneDrive - CREA/CREA/Projects&Proposals/2024_ISI_sementi_PhD/Anwar/GenomicPrediction/Practice_II/Pheno_Data/adjusted_means_red.fruit.wt.txt",quote = F,sep = "\t",row.names = F,col.names = T)
-gva.augmentedRCBD(model2)
-
+# summary(model1)
+# ranef(model1)    
+# vc    <- as.data.frame(VarCorr(model1))
+# var_g <- vc$vcov[vc$grp == "Genotype"]
+# var_e <- vc$vcov[vc$grp == "Residual"]
+# 
+# # Standard Augmented Broad-Sense Heritability
+# h2_aug <- ifelse((var_g + var_e) > 0, var_g / (var_g + var_e), 0)
+# 
+# h2_aug
+# s=H2(model1, target = "Genotype",method = c("Cullis", "Oakey", "Delta", "Piepho", "Standard"))
+# 
+# library(emmeans)
+# geno <- emmeans(model2, ~CODE)
+# geno=data.frame(geno)
+# re=data.frame(ranef(model1)$CODE)
+# re$CODE=rownames(re)
+# geno=merge(re,geno,by="CODE")
+# geno$adjmeans=geno$emmean+geno$X.Intercept.
+# ch=c("VOLARE","H1301","N6438","H2206","DF0175","H3402","UG11227","UG11227","DF0175")
+# #df_all$PlantWt[is.na(df_all$PlantWt)]<-mean(df_all$PlantWt,na.rm=T)
+# #df_all=df_all[!is.na(df_all$`plant.wt.(kg)`),]
+# 
+# model2=augmentedRCBD(block = as.factor(df_all$COL.x),treatment = as.factor(df_all$CODE),y = as.vector(df_all$`plant.wt.(kg)`),checks =ch )
+# augmentedRCBD::gva.augmentedRCBD(model2)
+# 
+# summary(model2)
+# adj2=model2$Means ## here the adjusted means computed with the package augumenedRCBD
+# write.table(x = model2$Means,file = "C:/Users/Agostino.Fricano/OneDrive - CREA/CREA/Projects&Proposals/2024_ISI_sementi_PhD/Anwar/GenomicPrediction/Practice_II/Pheno_Data/adjusted_means_red.fruit.wt.txt",quote = F,sep = "\t",row.names = F,col.names = T)
+# gva.augmentedRCBD(model2)
+# 
