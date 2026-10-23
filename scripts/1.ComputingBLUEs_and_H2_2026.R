@@ -9,9 +9,9 @@ library(sommer)
 library(heritable)
 ########################################### script arguments ########
 pheno_f<-here("data/pheno/data_final.csv") ## data 2026
-out_table1=here("Results/1.AugmentedRCBD_BLUEs")
-out_table2=here("Results/1.AugmentedRCBD_BLUEs_H2_heritable")
-REMOVE_VOLARE=FALSE
+out_table1=here("Results/2026/1.AugmentedRCBD_BLUEs")
+out_table2=here("Results/2026/1.AugmentedRCBD_BLUEs_H2_heritable")
+REMOVE_VOLARE=TRUE
 
 ######################################## main script ################
 pheno_raw <- read.csv(pheno_f, stringsAsFactors = FALSE)
@@ -140,15 +140,15 @@ for (i in seq_along(traits)) {
   stage2_summary$H2_sommer[i]  <- round(h2_sommer$Estimate,3)
   print ("Computing heritability with heritable package")
   #H2(fit_blup , target = "Genotype",method = c("Cullis", "Oakey", "Delta", "Piepho", "Standard"))
-  s=H2(fit_blup , target = "Genotype",method = c("Cullis", "Oakey", "Delta", "Piepho", "Standard"))
+  s=H2(fit_blup , target = "Genotype",method = c("Cullis", "Oakey", "Delta", "Standard"))
   heri$Cullis[i]=round(s[1],3)
   heri$Oakey[i]=round(s[2],3)
   heri$Delta[i]=round(s[3],3)
-  heri$Piepho[i]=round(s[4],3)
-  heri$Standard[1]=round(s[5],3)
+  #heri$Piepho[i]=round(s[4],3)
+  heri$Standard[1]=round(s[4],3)
 }
 
 
-write.csv(stage2_summary, paste0(out_table1,"VOLARE_",as.character(REMOVE_VOLARE),".csv"), row.names = FALSE)
-write.csv(heri, paste0(out_table2,"VOLARE_",as.character(REMOVE_VOLARE),".csv"), row.names = FALSE)
+write.csv(stage2_summary, paste0(out_table1,"_VOLARE_",as.character(REMOVE_VOLARE),".csv"), row.names = FALSE)
+write.csv(heri, paste0(out_table2,"_VOLARE_",as.character(REMOVE_VOLARE),".csv"), row.names = FALSE)
 
