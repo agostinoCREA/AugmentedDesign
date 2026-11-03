@@ -8,7 +8,7 @@ library(augmentedRCBD)
 library(sommer)
 library(heritable)
 ########################################### script arguments ########
-pheno_f<-here("data/pheno/data_final.csv") ## data 2026
+pheno_f<-here("data/pheno/2026/data_final.csv") ## data 2026
 out_table1=here("Results/2026/1.AugmentedRCBD_BLUEs")
 out_table2=here("Results/2026/1.AugmentedRCBD_BLUEs_H2_heritable")
 REMOVE_VOLARE=TRUE

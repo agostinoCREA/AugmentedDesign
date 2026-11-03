@@ -12,8 +12,8 @@ library("here")
 library("heritable")
 library("sommer")
 ################################## script arguments ###################
-file=here("data/2025/FieldMap.xlsx")  ## 20
-pheno=here("data/2025//PhD_GS_25_Dataset1_Final.xlsx")
+file=here("data/pheno/2025/FieldMap.xlsx")  ## 20
+pheno=here("data/pheno/2025/PhD_GS_25_Dataset1_Final.xlsx")
 maps2025<-here("Results/2025/Field_map_2025.png")
 out_table1=here("Results/2025/1.AugmentedRCBD_BLUEs_H2")
 out_table2=here("Results/2025/1.AugmentedRCBD_BLUEs_H2_heritable")
