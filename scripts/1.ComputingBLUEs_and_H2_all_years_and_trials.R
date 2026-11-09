@@ -20,7 +20,7 @@ out_table=here(paste0("Results/All_years_and_trials/"))
 #################################################### function ##########
 BLUE_H2<-function(trait_f, REMOVE_VOLARE,pheno){
   if (isTRUE(REMOVE_VOLARE)){
-    pheno[,7:16][pheno$Genotype=="VOLARE",]<-NA
+    pheno[,7:length(pheno[1,])][pheno$Genotype=="VOLARE",]<-NA
   }
   blues_list_lmer <- list()
   blues_list_aug <-list()
@@ -142,10 +142,10 @@ traits<-c("LBF","Plant_g","Red_g","SS_ratio","Maturity_pct","DAS","Firm_avg",
 pheno_raw=list()
 pheno_df=list()
 pheno_clean=list()
-for (tr in c("FD25","FD26")){
+for (tr in c("FD25","FD26","FG26")){
   pheno_raw[[tr]]<-read.xlsx(xlsxFile = pheno_f,sheet = tr)
   length(traits)
-  traits[traits %in% colnames(pheno_raw[[tr]])]
+  traits<-traits[traits %in% colnames(pheno_raw[[tr]])]
   # Clean strings and prepare Augmented RCBD grouping factors
   # Note: Year is ignored (all 2026); Column (A-K) and Block (1-11) are identical
   pheno_df[[tr]] <- pheno_raw[[tr]] %>%
@@ -167,14 +167,18 @@ for (tr in c("FD25","FD26")){
       Plant_g = ifelse(Plant_g <= 0, NA, Plant_g),
       Red_g = ifelse(Red_g <= 0, NA, Red_g)
     )
-  
+  traits<-c("LBF","Plant_g","Red_g","SS_ratio","Maturity_pct","DAS","Firm_avg",
+            "Brix","Peri_dry_g","SPAD")
 
 }
 
 FD25_no_volare=BLUE_H2(trait_f = traits[6],REMOVE_VOLARE = TRUE,pheno = pheno_clean$FD25) # fail
 FD25=BLUE_H2(trait_f = traits,REMOVE_VOLARE = FALSE,pheno = pheno_clean$FD25) # fail  
-FD26_no_volare=BLUE_H2(trait_f = traits,REMOVE_VOLARE = TRUE,pheno = pheno_clean$FD26)
+FD26_no_volare=BLUE_H2(trait_f = traits[6],REMOVE_VOLARE = TRUE,pheno = pheno_clean$FD26)
 FD26=BLUE_H2(trait_f = traits,REMOVE_VOLARE = FALSE,pheno = pheno_clean$FD26)
+
+FG26_no_volare=BLUE_H2(trait_f = traits,REMOVE_VOLARE = TRUE,pheno = pheno_clean$FG26)
+FG26=BLUE_H2(trait_f = traits,REMOVE_VOLARE = FALSE,pheno = pheno_clean$FG26)
 
 
 write.xlsx(x = FD25_no_volare[c("HeritabilityStand","HeritabiliyHeritable")], file = paste0(out_table,"/","H2_FD25_no_VOLARE_all",".xlsx"))
@@ -193,3 +197,47 @@ for (t in traits){
   
 }
 
+# sub_df$TestGenotype <- ifelse(
+#   sub_df$Check_ID == "Test_Population",
+#   as.character(sub_df$Genotype),
+#   NA
+# )
+# sub_df$CheckGenotype <- ifelse(
+#   sub_df$Check_ID != "Test_Population",
+#   as.character(sub_df$Genotype),
+#   NA
+# )
+# sub_df$TestGenotype <- factor(sub_df$TestGenotype)
+# sub_df$CheckGenotype <- factor(sub_df$CheckGenotype)
+# sub_df <- sub_df %>%
+#   mutate(
+#     Genotype = factor(Genotype),
+#     Block = factor(Block),
+#     Type = ifelse(
+#       Genotype %in% out1$Details$`Check treatments`,
+#       "Check",
+#       "Test"
+#     )
+#   )
+# fit_test <- lmer(
+#   Peri_dry_g ~ Type + 
+#     (1 | Block) +
+#     (1 | TestGenotype),
+#   data = sub_df,
+#   REML = TRUE
+# )
+# fit_test <- lmer(
+#   Peri_dry_g ~ 0 + Genotype +
+#     (1 | Block) +
+#     (1 | TestGenotype),
+#   data = sub_df,
+#   REML = TRUE
+# )
+# fit_test <- lmer(
+#   Peri_dry_g ~ CheckGenotype +
+#     (1 | Block) +
+#     (1 | TestGenotype),
+#   data = sub_df,
+#   REML = TRUE,
+#   subset = Type == "Test" | Type == "Check"
+# )
